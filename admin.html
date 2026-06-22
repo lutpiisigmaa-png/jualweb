@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Kasir | Warung Nusantara</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-deep: #020617;
+            --bg-card: #0f172a;
+            --primary: #ef4444;
+            --success: #10b981;
+            --warning: #f59e0b;
+            --info: #3b82f6;
+            --text-main: #f8fafc;
+            --text-dim: #94a3b8;
+            --border: rgba(255, 255, 255, 0.05);
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-deep); color: var(--text-main); display: flex; flex-direction: column; min-height: 100vh; }
+
+        /* HEADER NAVBAR */
+        header { 
+            background-color: var(--bg-card); padding: 15px 4%; 
+            display: flex; justify-content: space-between; align-items: center; 
+            border-bottom: 1px solid var(--border); box-shadow: 0 4px 20px rgba(0,0,0,0.4);
+            position: sticky; top: 0; z-index: 100;
+        }
+        .brand { display: flex; align-items: center; gap: 10px; font-weight: 800; font-size: 18px; color: var(--primary); }
+        .nav-actions { display: flex; gap: 15px; align-items: center; }
+        
+        /* TOMBOL SIMULASI */
+        .btn-simulate { background: var(--info); color: white; border: none; padding: 8px 16px; border-radius: 8px; font-weight: 600; font-size: 12px; cursor: pointer; transition: 0.3s; }
+        .btn-simulate:hover { transform: translateY(-2px); box-shadow: 0 0 15px rgba(59, 130, 246, 0.5); }
+
+        main { padding: 30px 4%; flex-grow: 1; display: flex; flex-direction: column; gap: 30px; }
+
+        /* ROW RINGKASAN STATISTIK */
+        .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; }
+        .stat-card { background: var(--bg-card); border: 1px solid var(--border); padding: 20px; border-radius: 12px; display: flex; align-items: center; gap: 15px; }
+        .stat-icon { width: 45px; height: 45px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px; }
+        .stat-data h3 { font-size: 22px; font-weight: 800; }
+        .stat-data p { font-size: 11px; color: var(--text-dim); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px; }
+
+        /* BOARD ANTREAN PESANAN */
+        .board-title { font-size: 20px; font-weight: 700; display: flex; align-items: center; gap: 10px; margin-bottom: 15px; }
+        .orders-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; }
+        
+        /* KARTU PESANAN */
+        .order-card { background: var(--bg-card); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; display: flex; flex-direction: column; transition: 0.3s; animation: fadeIn 0.4s ease-out; }
+        .order-card:hover { border-color: var(--info); box-shadow: 0 10px 20px rgba(0,0,0,0.3); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        .order-header { padding: 15px; border-bottom: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .table-badge { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); padding: 5px 12px; border-radius: 8px; font-weight: 700; font-size: 14px; color: var(--info); }
+        .order-time { font-size: 11px; color: var(--text-dim); }
+
+        .order-body { padding: 15px; flex-grow: 1; }
+        .item-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 8px; color: #cbd5e1; }
+        .item-name { font-weight: 600; }
+        .item-qty { color: var(--text-dim); }
+
+        .order-note { background: rgba(245, 158, 11, 0.05); border-left: 3px solid var(--warning); padding: 8px 12px; border-radius: 4px; font-size: 12px; margin-top: 15px; color: #fcd34d; }
+
+        .order-footer { padding: 15px; background: rgba(0,0,0,0.2); border-top: 1px solid var(--border); display: flex; justify-content: space-between; align-items: center; }
+        .total-label { font-size: 11px; color: var(--text-dim); font-weight: 600; }
+        .total-amount { font-size: 16px; font-weight: 800; color: var(--success); }
+
+        /* BADGE STATUS & TOMBOL AKSI */
+        .status-btn { border: none; padding: 8px 16px; border-radius: 8px; font-family: 'Poppins'; font-weight: 700; font-size: 12px; cursor: pointer; transition: 0.2s; }
+        .status-pending { background: rgba(245, 158, 11, 0.1); color: var(--warning); border: 1px solid var(--warning); }
+        .status-process { background: rgba(59, 130, 246, 0.1); color: var(--info); border: 1px solid var(--info); }
+        .status-done { background: rgba(16, 185, 129, 0.1); color: var(--success); border: 1px solid var(--success); cursor: not-allowed; }
+
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="brand"><i class="fa-solid fa-desktop"></i> MONITOR KASIR Resto</div>
+        <div class="nav-actions">
+            <button class="btn-simulate" onclick="simulasiPesananMasuk()"><i class="fa-solid fa-bell"></i> Tes Pesanan Masuk</button>
+        </div>
+    </header>
+
+    <main>
+        <div class="stats-grid">
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);"><i class="fa-solid fa-wallet"></i></div>
+                <div class="stat-data"><p>Omset Hari Ini</p><h3>EGP <span id="stat-omset">0</span></h3></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(245, 158, 11, 0.1); color: var(--warning);"><i class="fa-solid fa-clock"></i></div>
+                <div class="stat-data"><p>Antrean Pending</p><h3><span id="stat-pending">0</span></h3></div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-icon" style="background: rgba(16, 185, 129, 0.1); color: var(--success);"><i class="fa-solid fa-circle-check"></i></div>
+                <div class="stat-data"><p>Selesai & Lunas</p><h3><span id="stat-selesai">0</span></h3></div>
+            </div>
+        </div>
+
+        <div>
+            <div class="board-title"><i class="fa-solid fa-fire-burner" style="color: var(--primary);"></i> Antrean Dapur & Meja</div>
+            <div class="orders-grid" id="orders-list">
+                </div>
+        </div>
+    </main>
+
+    <script>
+        // ENGINE AUDIO INTERNAL (KITCHEN BELL SFX)
+        const AudioContext = window.AudioContext || window.webkitAudioContext;
+        let audioCtx;
+
+        function bunyiLoncengDapur() {
+            if (!audioCtx) audioCtx = new AudioContext();
+            if (audioCtx.state === 'suspended') audioCtx.resume();
+            
+            const now = audioCtx.currentTime;
+            
+            // Ding Pertama (High pitch)
+            let osc1 = audioCtx.createOscillator();
+            let gain1 = audioCtx.createGain();
+            osc1.type = 'sine'; osc1.frequency.setValueAtTime(1500, now);
+            gain1.gain.setValueAtTime(0.1, now); gain1.gain.exponentialRampToValueAtTime(0.001, now + 0.4);
+            osc1.connect(gain1); gain1.connect(audioCtx.destination);
+            osc1.start(now); osc1.stop(now + 0.4);
+
+            // Ding Kedua (Sedikit jeda, pitch beda biar natural ala lonceng besi resto)
+            let osc2 = audioCtx.createOscillator();
+            let gain2 = audioCtx.createGain();
+            osc2.type = 'sine'; osc2.frequency.setValueAtTime(1510, now + 0.08);
+            gain2.gain.setValueAtTime(0.1, now + 0.08); gain2.gain.exponentialRampToValueAtTime(0.001, now + 0.48);
+            osc2.connect(gain2); gain2.connect(audioCtx.destination);
+            osc2.start(now + 0.08); osc2.stop(now + 0.48);
+        }
+
+        // DATABASE STATE PESANAN AKTIF
+        let daftarPesanan = [];
+
+        function renderDashboard() {
+            const container = document.getElementById('orders-list');
+            container.innerHTML = '';
+
+            let pendingCount = 0;
+            let selesaiCount = 0;
+            let totalOmset = 0;
+
+            daftarPesanan.forEach(order => {
+                // Hitung Statistik
+                if (order.status === 'pending') pendingCount++;
+                if (order.status === 'done') {
+                    selesaiCount++;
+                    totalOmset += order.total;
+                }
+
+                // Format List Items Makanan
+                let itemsHtml = order.items.map(item => `
+                    <div class="item-row">
+                        <span class="item-name">${item.nama}</span>
+                        <span class="item-qty">x${item.qty}</span>
+                    </div>
+                `).join('');
+
+                // Format Catatan Tambahan
+                let noteHtml = order.catatan ? `<div class="order-note"><i class="fa-solid fa-comment-dots"></i> Info: "${order.catatan}"</div>` : '';
+
+                // Format Tombol Sesuai Status Berjalan
+                let actionBtn = '';
+                if(order.status === 'pending') {
+                    actionBtn = `<button class="status-btn status-pending" onclick="ubahStatus(${order.id}, 'process')"><i class="fa-solid fa-spinner"></i> Terima & Masak</button>`;
+                } else if(order.status === 'process') {
+                    actionBtn = `<button class="status-btn status-process" onclick="ubahStatus(${order.id}, 'done')"><i class="fa-solid fa-check"></i> Selesai & Lunas</button>`;
+                } else {
+                    actionBtn = `<button class="status-btn status-done" disabled><i class="fa-solid fa-circle-check"></i> Selesai</button>`;
+                }
+
+                // Masukkin Kartu ke Container Grid
+                container.innerHTML += `
+                    <div class="order-card">
+                        <div class="order-header">
+                            <span class="table-badge"><i class="fa-solid fa-chair"></i> Meja ${order.meja}</span>
+                            <span class="order-time">${order.waktu}</span>
+                        </div>
+                        <div class="order-body">
+                            ${itemsHtml}
+                            ${noteHtml}
+                        </div>
+                        <div class="order-footer">
+                            <div>
+                                <div class="total-label">TOTAL BAYAR</div>
+                                <div class="total-amount">EGP ${order.total}</div>
+                            </div>
+                            <div>
+                                ${actionBtn}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            // Update Tampilan Bar Statistik Atas
+            document.getElementById('stat-omset').innerText = totalOmset;
+            document.getElementById('stat-pending').innerText = pendingCount;
+            document.getElementById('stat-selesai').innerText = selesaiCount;
+        }
+
+        function ubahStatus(orderId, statusBaru) {
+            let order = daftarPesanan.find(o => o.id === orderId);
+            if (order) {
+                order.status = statusBaru;
+                renderDashboard();
+            }
+        }
+
+        // ==========================================
+        // 🔥 SIMULATOR PESANAN MASUK (UNTUK TESTING LOKAL) 🔥
+        // ==========================================
+        let dummyId = 100;
+        function simulasiPesananMasuk() {
+            bunyiLoncengDapur(); // BUNYI DING DING!
+
+            let daftarMenuDummy = [
+                { nama: "Bakso Urat Granat", harga: 150 },
+                { nama: "Nasi Goreng Gila", harga: 120 },
+                { nama: "Ayam Penyet Jos", harga: 140 },
+                { nama: "Es Teh Manis", harga: 20 }
+            ];
+
+            // Acak pesanan masakan bray
+            let acakMenu1 = daftarMenuDummy[Math.floor(Math.random() * 3)];
+            let acakMenu2 = daftarMenuDummy[3]; // Es Teh pasti dibeli
+            let qty1 = Math.floor(Math.random() * 2) + 1;
+            let qty2 = Math.floor(Math.random() * 3) + 1;
+
+            let totalHarga = (acakMenu1.harga * qty1) + (acakMenu2.harga * qty2);
+            let waktuSkrg = new Date().toLocaleTimeString('id-ID', { hour: '2-digit', minute: '2-digit' });
+
+            dummyId++;
+            daftarPesanan.unshift({
+                id: dummyId,
+                meja: Math.floor(Math.random() * 20) + 1,
+                waktu: waktuSkrg,
+                items: [
+                    { nama: acakMenu1.nama, qty: qty1 },
+                    { nama: acakMenu2.nama, qty: qty2 }
+                ],
+                catatan: Math.random() > 0.5 ? "Sambel agak banyakin ya bray" : "",
+                status: "pending",
+                total: totalHarga
+            });
+
+            renderDashboard();
+        }
+
+        // Jalankan render awal kosong
+        renderDashboard();
+
+        // JALUR SAKTI KONEKSI DATABASE GOOGLE SHEETS LU NANTI (POLA ANTENA FETCH)
+        // function pollingPesananBaru() {
+        //     fetch('URL_GOOGLE_SCRIPT_LU?action=getOrders')
+        //     .then(res => res.json())
+        //     .then(data => {
+        //         // Jika jumlah data baru lebih banyak dari array lokal, bunyikan lonceng dapur!
+        //         if(data.length > daftarPesanan.length) bunyiLoncengDapur();
+        //         daftarPesanan = data;
+        //         renderDashboard();
+        //     });
+        // }
+        // setInterval(pollingPesananBaru, 5000); // Ngecek tiap 5 detik sekali otomatis
+    </script>
+</body>
+</html>
