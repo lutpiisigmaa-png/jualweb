@@ -3,43 +3,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Katalog | Roti Gembong</title>
+    <title>Tupi Order | Roti Gembong Kota Raja</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <style>
         :root {
-            --primary-yellow: #fbbd18; /* Kuning Kota Raja */
-            --primary-brown: #4e3415;  /* Coklat Roti */
-            --bg-body: #e5e7eb;        /* Abu-abu luar layar */
+            --primary-yellow: #fbbd18;
+            --primary-brown: #4e3415;
+            --bg-body: #e5e7eb;
             --white: #ffffff;
+            --text-gray: #6b7280;
         }
 
-        * { 
-            margin: 0; 
-            padding: 0; 
-            box-sizing: border-box; 
-            font-family: 'Poppins', sans-serif; 
-        }
-        
-        body { 
-            background-color: var(--bg-body); 
-            display: flex; 
-            justify-content: center; /* Memastikan app berada di tengah browser laptop */
-        }
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Poppins', sans-serif; }
+        body { background-color: var(--bg-body); display: flex; justify-content: center; }
 
-        /* CONTAINER UTAMA (Ukuran HP) */
         .app-container {
             width: 100%;
-            max-width: 480px; 
-            background-color: var(--primary-brown);
+            max-width: 480px;
+            background-color: var(--white);
             min-height: 100vh;
             position: relative;
             box-shadow: 0 0 20px rgba(0,0,0,0.15);
-            overflow: hidden;
+            padding-bottom: 90px;
         }
 
-        /* HEADER KUNING (TEMPAT LOGO LU NANTI) */
+        /* HEADER & LANG KONTROL */
         header {
             background-color: var(--primary-yellow);
             padding: 15px 20px;
@@ -47,136 +37,356 @@
             justify-content: space-between;
             align-items: center;
         }
-
-        /* Ini tempat lu masukin tag <img> logo aslinya nanti bray */
-        .logo-placeholder {
-            font-weight: 800;
-            color: var(--white);
-            -webkit-text-stroke: 1px var(--primary-brown); /* Efek outline ala logo di foto */
-            font-size: 22px;
-            display: flex;
-            flex-direction: column;
-            line-height: 1.1;
-            letter-spacing: 1px;
-        }
-      .logo-placeholder span { 
-            font-size: 10px; 
-            font-weight: 700; 
-            letter-spacing: 0px; 
-            -webkit-text-stroke: 0px;
-            color: var(--primary-brown);
-        }
-
-        .menu-icon { 
-            color: var(--white); 
-            font-size: 24px; 
-            cursor: pointer; 
-        }
-
-        /* BAGIAN SEARCH BAR (AREA COKLAT) */
-        .search-section {
-            padding: 25px 20px;
-            background-color: var(--primary-brown);
-        }
-
-        .search-box {
-            background: var(--white);
-            border-radius: 30px;
-            padding: 12px 20px;
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            box-shadow: 0 4px 10px rgba(0,0,0,0.2);
-        }
-
-        .search-box i { color: #6b7280; font-size: 16px; }
-        .search-box input {
+        header img { height: 50px; object-fit: contain; }
+        
+        .header-right { display: flex; align-items: center; gap: 15px; }
+        .lang-select {
+            background: rgba(255,255,255,0.3);
             border: none;
+            padding: 5px 8px;
+            border-radius: 12px;
+            font-size: 11px;
+            font-weight: 700;
+            color: var(--primary-brown);
             outline: none;
-            width: 100%;
-            font-size: 15px;
-            font-weight: 500;
-            color: #374151;
-        }
-
-        /* AREA KANVAS PUTIH (BAWAH) */
-        .main-content {
-            background-color: var(--white);
-            border-radius: 35px 35px 0 0; /* Lengkungan atas */
-            padding: 35px 25px;
-            min-height: calc(100vh - 180px); /* Memenuhi sisa layar bawah */
-        }
-
-        /* GRID FOTO MENU (2 KOLOM) */
-        .catalog-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 25px;
-        }
-
-        /* KOTAK MENU DENGAN BORDER KUNING */
-        .menu-card {
-            background-color: #f0f8ff; /* Warna background sementara */
-            border: 6px solid var(--primary-yellow);
-            border-radius: 25px;
-            aspect-ratio: 1 / 1; /* Biar kotaknya proporsional 1:1 */
-            overflow: hidden;
-            position: relative;
             cursor: pointer;
-            transition: transform 0.2s;
         }
 
-        .menu-card:hover { transform: scale(1.03); }
+        .menu-icon { color: var(--primary-brown); font-size: 24px; cursor: pointer; }
 
-        /* FOTO ROTI DARI CLOUDINARY NANTI MASUK SINI */
-        .menu-card img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
+        /* SIDEBAR / DRAWER MENU */
+        .sidebar {
+            position: fixed; top: 0; left: -100%; width: 100%; max-width: 300px; height: 100%;
+            background: var(--primary-brown); z-index: 2000; transition: 0.4s ease; padding: 30px 20px;
+            box-shadow: 5px 0 15px rgba(0,0,0,0.3); color: var(--white);
         }
+        .sidebar.active { left: 0; }
+        .sidebar-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 40px; }
+        .sidebar-menu-item { display: flex; align-items: center; gap: 15px; padding: 15px 10px; border-bottom: 1px solid rgba(255,255,255,0.1); cursor: pointer; font-weight: 500; }
+        .sidebar-menu-item:hover { background: rgba(255,255,255,0.05); }
+
+        /* SEARCH SECTION */
+        .search-section { padding: 20px; background-color: var(--primary-brown); }
+        .search-box {
+            background: var(--white); border-radius: 30px; padding: 12px 20px;
+            display: flex; align-items: center; gap: 12px;
+        }
+        .search-box input { border: none; outline: none; width: 100%; font-size: 15px; }
+
+        /* CONTENT & CATALOG GRID */
+        .main-content { background-color: var(--white); border-radius: 35px 35px 0 0; margin-top: -25px; padding: 30px 20px; }
+        .catalog-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px; }
+        
+        .menu-card {
+            background: var(--white); border: 4px solid var(--primary-yellow); border-radius: 22px;
+            overflow: hidden; cursor: pointer; display: flex; flex-direction: column; justify-content: space-between;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .menu-card img { width: 100%; aspect-ratio: 1/1; object-fit: cover; }
+        .menu-info { padding: 10px; text-align: center; }
+        .menu-title { font-size: 13px; font-weight: 700; color: var(--primary-brown); margin-bottom: 4px; }
+        .menu-price { font-size: 11px; font-weight: 800; color: #e11d48; }
+
+        /* FLOATING CART BARS */
+        .floating-cart {
+            position: fixed; bottom: 15px; left: 50%; transform: translateX(-50%);
+            width: 90%; max-width: 440px; background: var(--primary-brown); color: var(--white);
+            padding: 15px 20px; border-radius: 30px; display: flex; justify-content: space-between;
+            align-items: center; box-shadow: 0 10px 25px rgba(0,0,0,0.3); cursor: pointer; z-index: 99;
+        }
+        .floating-cart.hidden { display: none; }
+
+        /* MODAL SYSTEM (UNTUK DETAIL MENU DAN CHECKOUT) */
+        .modal-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5);
+            z-index: 1500; display: none; align-items: flex-end; justify-content: center;
+        }
+        .modal-content {
+            background: var(--white); width: 100%; max-width: 480px; border-radius: 30px 30px 0 0;
+            padding: 25px; max-height: 85vh; overflow-y: auto; animation: slideUp 0.3s ease-out;
+        }
+        @keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+        
+        .modal-close-btn { background: none; border: none; font-size: 22px; color: var(--text-gray); cursor: pointer; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; font-size: 12px; font-weight: 600; margin-bottom: 5px; color: var(--primary-brown); }
+        .input-group input { width: 100%; padding: 12px; border: 2px solid #e2e8f0; border-radius: 12px; outline: none; }
+        
+        .btn-action {
+            background: var(--primary-yellow); color: var(--primary-brown); border: none;
+            width: 100%; padding: 14px; border-radius: 15px; font-weight: 700; font-size: 15px;
+            cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px;
+        }
+        
+        .btn-sharelock { background: #10b981; color: white; margin-bottom: 15px; }
+
+        /* KEBUTUHAN RTL UNTUK ARAB */
+        .rtl { direction: rtl; text-align: right; }
+        .rtl .sidebar { left: auto; right: -100%; }
+        .rtl .sidebar.active { right: 0; left: auto; }
     </style>
 </head>
 <body>
 
-    <div class="app-container">
+    <div class="app-container" id="app">
         
-     <header>
-    <img src="logo-roti.png" alt="Logo Kota Raja" style="height: 50px; object-fit: contain;">
+        <div class="sidebar" id="sidebar">
+            <div class="sidebar-header">
+                <h3 data-key="nav_title">Menu Tupi</h3>
+                <i class="fa-solid fa-xmark menu-icon" style="color: white;" onclick="toggleSidebar()"></i>
+            </div>
+            <div class="sidebar-menu-item" onclick="window.open('https://wa.me/628123456789')">
+                <i class="fa-brands fa-whatsapp"></i> <span data-key="menu_cs">Customer Service</span>
+            </div>
+            <div class="sidebar-menu-item">
+                <i class="fa-solid fa-circle-info"></i> <span data-key="menu_about">Tentang Kota Raja</span>
+            </div>
+        </div>
 
-    <div class="menu-icon">
-        <i class="fa-solid fa-bars" style="color: #4e3415;"></i>
-    </div>
-</header>
+        <header>
+            <img src="logo-roti.png" alt="Logo" onerror="this.style.display='none'">
+            <div class="header-right">
+                <select class="lang-select" onchange="gantiBahasa(this.value)">
+                    <option value="id">🇮🇩 ID</option>
+                    <option value="ar">🇪🇬 AR</option>
+                    <option value="en">🇬🇧 EN</option>
+                </select>
+                <i class="fa-solid fa-bars menu-icon" onclick="toggleSidebar()"></i>
+            </div>
+        </header>
+
         <div class="search-section">
             <div class="search-box">
                 <i class="fa-solid fa-magnifying-glass"></i>
-                <input type="text" placeholder="cari varian">
+                <input type="text" id="search-input" data-placeholder="search_holder" placeholder="Cari varian roti..." oninput="filterMenu()">
             </div>
         </div>
 
         <div class="main-content">
-            <div class="catalog-grid" id="catalog">
-                
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=500&q=80" alt="Roti Gembong Coklat">
+            <div class="catalog-grid" id="catalog-container">
+                </div>
+        </div>
+
+        <div class="floating-cart hidden" id="floating-cart" onclick="bukaModalCheckout()">
+            <div><i class="fa-solid fa-basket-shopping"></i> <span id="cart-count">0</span> <span data-key="cart_text">Item</span></div>
+            <div id="cart-total-price">LE 0</div>
+        </div>
+
+        <div class="modal-overlay" id="detail-modal" onclick="tutupModalLuar(event, 'detail-modal')">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 15px;">
+                    <h2 id="modal-menu-title" style="color: var(--primary-brown)"></h2>
+                    <button class="modal-close-btn" onclick="tutupModal('detail-modal')"><i class="fa-solid fa-xmark"></i></button>
+                </div>
+                <img id="modal-menu-img" src="" style="width:100%; max-height:220px; object-fit:cover; border-radius:15px; margin-bottom:15px;">
+                <p id="modal-menu-desc" style="color: var(--text-gray); font-size:14px; line-height:1.5; margin-bottom:20px;"></p>
+                <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
+                    <span style="font-weight:700; color:var(--text-gray)" data-key="pop_price">Harga:</span>
+                    <span id="modal-menu-price" style="font-weight:800; color:#e11d48; font-size:18px;"></span>
+                </div>
+                <button class="btn-action" id="add-to-cart-btn"><i class="fa-solid fa-plus"></i> <span data-key="btn_add_cart">Tambah ke Keranjang</span></button>
+            </div>
+        </div>
+
+        <div class="modal-overlay" id="checkout-modal" onclick="tutupModalLuar(event, 'checkout-modal')">
+            <div class="modal-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                    <h2 style="color: var(--primary-brown)" data-key="check_title">Detail Pengiriman</h2>
+                    <button class="modal-close-btn" onclick="tutupModal('checkout-modal')"><i class="fa-solid fa-xmark"></i></button>
                 </div>
                 
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1550617931-e17a7b70dce2?w=500&q=80" alt="Roti Gembong Keju">
+                <div class="input-group">
+                    <label data-key="form_name">Nama Lengkap</label>
+                    <input type="text" id="cust-name" required placeholder="Masukkan nama lu">
+                </div>
+                <div class="input-group">
+                    <label data-key="form_phone">Nomor WhatsApp</label>
+                    <input type="tel" id="cust-phone" required placeholder="Contoh: +201xxxxxxxxx">
                 </div>
                 
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80" alt="Roti Gembong Original">
-                </div>
-                
-                <div class="menu-card">
-                    <img src="https://images.unsplash.com/photo-1573140247632-f8fd74997d5c?w=500&q=80" alt="Roti Gembong Srikaya">
+                <div class="input-group">
+                    <label data-key="form_loc">Lokasi Rumah / Asrama (Sharelock)</label>
+                    <button class="btn-action btn-sharelock" onclick="ambilLokasiGPS()">
+                        <i class="fa-solid fa-location-crosshairs"></i> <span id="gps-status" data-key="btn_gps">Kunci Lokasi GPS</span>
+                    </button>
+                    <input type="text" id="cust-coords" readonly placeholder="Koordinat Google Maps otomatis terisi" style="background:#f1f5f9; font-size:12px;">
                 </div>
 
+                <button class="btn-action" style="background:var(--primary-brown); color:white;" onclick="prosesKirimKeAdmin()"><i class="fa-solid fa-paper-plane"></i> <span data-key="btn_order_now">Kirim Pesanan (Take Away / Delivery)</span></button>
             </div>
         </div>
 
     </div>
 
+    <script>
+        // DICTIONARY TIGA BAHASA SAKTI TUPI
+        const kamus = {
+            id: {
+                search_holder: "Cari varian roti...", nav_title: "Menu Tupi", menu_cs: "Customer Service",
+                menu_about: "Tentang Kota Raja", cart_text: "Item", pop_price: "Harga:",
+                btn_add_cart: "Tambah ke Keranjang", check_title: "Detail Pengiriman", form_name: "Nama Lengkap",
+                form_phone: "Nomor WhatsApp", form_loc: "Lokasi Rumah / Asrama (Sharelock)", btn_gps: "Kunci Lokasi GPS",
+                btn_order_now: "Kirim Pesanan Sekarang", gps_success: "📍 Lokasi Terkunci!", gps_fail: "Gagal lacak. Isi manual nanti bray"
+            },
+            ar: {
+                search_holder: "البحث عن نكهات الخبز...", nav_title: "قائمة توبي", menu_cs: "خدمة العملاء",
+                menu_about: "حول كوتا راجا", cart_text: "اصناف", pop_price: "السعر:",
+                btn_add_cart: "أضف إلى السلة", check_title: "تفاصيل الشحن", form_name: "الاسم الكامل",
+                form_phone: "رقم الواتساب", form_loc: "موقع السكن (مشاركة الموقع)", btn_gps: "تحديد موقع GPS",
+                btn_order_now: "أرسل الطلب الآن", gps_success: "📍 تم تحديد الموقع!", gps_fail: "فشل التتبع"
+            },
+            en: {
+                search_holder: "Search bread variants...", nav_title: "Tupi Menu", menu_cs: "Customer Service",
+                menu_about: "About Kota Raja", cart_text: "Items", pop_price: "Price:",
+                btn_add_cart: "Add to Cart", check_title: "Delivery Details", form_name: "Full Name",
+                form_phone: "WhatsApp Number", form_loc: "Asrama Location (Sharelock)", btn_gps: "Lock GPS Location",
+                btn_order_now: "Send Order Now", gps_success: "📍 Location Locked!", gps_fail: "Failed to track GPS"
+            }
+        };
+
+        let bahasaSekarang = 'id';
+
+        // DATABASE MENU (Injeksi Link Cloudinary Lu Disini Nanti Bray)
+        const daftarRoti = [
+            { id: 1, nama: "Gembong Coklat Lumer", hargaLE: 35, hargaIDR: 11000, desc: "Roti gembong lembut dengan isian coklat premium khas Nusantara yang melumer di mulut sejak gigitan pertama. Tanpa bahan pengawet!", img: "https://images.unsplash.com/photo-1598373182133-52452f7691ef?w=500&q=80" },
+            { id: 2, nama: "Gembong Keju Gondrong", hargaLE: 40, hargaIDR: 13000, desc: "Sajian keju parut melimpah di luar dan krim keju gurih di dalam, perpaduan manis gurih yang pas buat nemenin nugas di Kairo.", img: "https://images.unsplash.com/photo-1550617931-e17a7b70dce2?w=500&q=80" },
+            { id: 3, nama: "Gembong Original Klasik", hargaLE: 25, hargaIDR: 8000, desc: "Roti original original Kota Raja dengan resep otentik, tekstur selembut sutra cocok dicelup ke teh anget.", img: "https://images.unsplash.com/photo-1509440159596-0249088772ff?w=500&q=80" }
+        ];
+
+        let keranjang = [];
+        let koordinatGPS = "";
+
+        // RENDER CATALOG UTAMA
+        function renderKatalog(data = daftarRoti) {
+            const container = document.getElementById('catalog-container');
+            container.innerHTML = '';
+            data.forEach(roti => {
+                container.innerHTML += `
+                    <div class="menu-card" onclick="bukaModalDetail(${roti.id})">
+                        <img src="${roti.img}" alt="${roti.nama}">
+                        <div class="menu-info">
+                            <div class="menu-title">${roti.nama}</div>
+                            <div class="menu-price">LE ${roti.hargaLE} / Rp ${roti.hargaIDR.toLocaleString('id-ID')}</div>
+                        </div>
+                    </div>
+                `;
+            });
+        }
+
+        // FUNGSI MULTI-LANGUAGE ENGINE
+        function gantiBahasa(lang) {
+            bahasaSekarang = lang;
+            const app = document.getElementById('app');
+            
+            if(lang === 'ar') { app.classList.add('rtl'); } 
+            else { app.classList.remove('rtl'); }
+
+            document.querySelectorAll('[data-key]').forEach(el => {
+                const key = el.getAttribute('data-key');
+                if(kamus[lang][key]) el.innerText = kamus[lang][key];
+            });
+
+            document.querySelectorAll('[data-placeholder]').forEach(el => {
+                const key = el.getAttribute('data-placeholder');
+                if(kamus[lang][key]) el.setAttribute('placeholder', kamus[lang][key]);
+            });
+        }
+
+        // FILTER SEARCH BAR
+        function filterMenu() {
+            const keyword = document.getElementById('search-input').value.toLowerCase();
+            const hasilFilter = daftarRoti.filter(roti => roti.nama.toLowerCase().includes(keyword));
+            renderKatalog(hasilFilter);
+        }
+
+        // POPUP DETAIL MODAL (SHOPEE STYLE)
+        function bukaModalDetail(id) {
+            const roti = daftarRoti.find(r => r.id === id);
+            document.getElementById('modal-menu-title').innerText = roti.nama;
+            document.getElementById('modal-menu-img').src = roti.img;
+            document.getElementById('modal-menu-desc').innerText = roti.desc;
+            document.getElementById('modal-menu-price').innerText = `LE ${roti.hargaLE} / Rp ${roti.hargaIDR.toLocaleString('id-ID')}`;
+            
+            document.getElementById('add-to-cart-btn').onclick = function() {
+                tambahKeKeranjang(roti);
+                tutupModal('detail-modal');
+            };
+            document.getElementById('detail-modal').style.display = 'flex';
+        }
+
+        function tambahKeKeranjang(roti) {
+            keranjang.push(roti);
+            updateCartFloatingBar();
+        }
+
+        function updateCartFloatingBar() {
+            const bar = document.getElementById('floating-cart');
+            if(keranjang.length > 0) {
+                bar.classList.remove('hidden');
+                document.getElementById('cart-count').innerText = keranjang.length;
+                let totalLE = keranjang.reduce((sum, item) => sum + item.hargaLE, 0);
+                let totalIDR = keranjang.reduce((sum, item) => sum + item.hargaIDR, 0);
+                document.getElementById('cart-total-price').innerText = `LE ${totalLE} / Rp ${totalIDR.toLocaleString('id-ID')}`;
+            } else {
+                bar.classList.add('hidden');
+            }
+        }
+
+        // MODAL CHECKOUT MANAGEMENT
+        function bukaModalCheckout() { document.getElementById('checkout-modal').style.display = 'flex'; }
+        function tutupModal(id) { document.getElementById('detail-modal').style.display = 'none'; document.getElementById('checkout-modal').style.display = 'none';}
+        function tutupModalLuar(e, id) { if(e.target.id === id) tutupModal(id); }
+        function toggleSidebar() { document.getElementById('sidebar').classList.toggle('active'); }
+
+        // FITUR DETEKSI SHARELOCK OTOMATIS
+        function ambilLokasiGPS() {
+            const gpsText = document.getElementById('gps-status');
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(
+                    (position) => {
+                        koordinatGPS = `https://www.google.com/maps?q=${position.coords.latitude},${position.coords.longitude}`;
+                        document.getElementById('cust-coords').value = koordinatGPS;
+                        gpsText.innerText = kamus[bahasaSekarang].gps_success;
+                    },
+                    () => { alert(kamus[bahasaSekarang].gps_fail); }
+                );
+            } else {
+                alert("Browser lu kaga support GPS bray");
+            }
+        }
+
+        // LEMPAR DATA KE DATABASE ADMIN / KASIR HTML
+        function prosesKirimKeAdmin() {
+            const nama = document.getElementById('cust-name').value;
+            const wa = document.getElementById('cust-phone').value;
+            
+            if(!nama || !wa) { alert("Nama sama Nomor WA diisi dulu komandan!"); return; }
+
+            const dataPesanan = {
+                idOrder: Date.now(),
+                pelanggan: nama,
+                whatsapp: wa,
+                lokasiMaps: koordinatGPS || "Minta manual via WA bray",
+                items: keranjang.map(i => i.nama),
+                totalLE: keranjang.reduce((sum, item) => sum + item.hargaLE, 0),
+                totalIDR: keranjang.reduce((sum, item) => sum + item.hargaIDR, 0)
+            };
+
+            console.log("TEMBAK DATA KE ADMIN DASHBOARD VIA LOCALSTORAGE/API...", dataPesanan);
+            
+            // JALUR SAKTI SEMENTARA: Kita lempar ke LocalStorage biar dibaca file admin.html lu
+            let databaseLokal = JSON.parse(localStorage.getItem('orders_tupi')) || [];
+            databaseLokal.push(dataPesanan);
+            localStorage.setItem('orders_tupi', JSON.stringify(databaseLokal));
+
+            alert("Pesanan sukses dikirim ke admin! Alpi & Luthfi siap memproses roti gembong lu!");
+            keranjang = [];
+            updateCartFloatingBar();
+            tutupModal('checkout-modal');
+        }
+
+        // Bootstrapping awal
+        renderKatalog();
+    </script>
 </body>
 </html>
